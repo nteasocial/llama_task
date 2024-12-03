@@ -1,12 +1,7 @@
-import { Inter } from "next/font/google";
-import "./globals.css";
+"use client";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata = {
-  title: "Crypto Price Tracker",
-  description: "Track cryptocurrency prices in real-time",
-};
+import { ApolloProvider } from "@apollo/client";
+import { client } from "../apollo-client";
 
 export default function RootLayout({
   children,
@@ -14,8 +9,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html>
+      <body>
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </body>
     </html>
   );
 }

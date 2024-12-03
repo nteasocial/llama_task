@@ -1,4 +1,5 @@
 Django==4.2.7
+graphene
 graphene-django==3.2.0
 celery==5.3.6
 redis==5.0.1

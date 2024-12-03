@@ -1,48 +1,36 @@
 import graphene
-from graphene_django import DjangoObjectType
+from django.utils import timezone
 from .models import CryptoCurrency
 
 
-class CryptoCurrencyType(DjangoObjectType):
-    class Meta:
-        model = CryptoCurrency
-        fields = ('id', 'name', 'symbol', 'price', 'last_updated')
+class CryptoCurrencyType(graphene.ObjectType):
+    name = graphene.String()
+    symbol = graphene.String()
+    defillama_id = graphene.String()
+    price = graphene.Float()
+    last_updated = graphene.DateTime()
+
+
+class Query(graphene.ObjectType):
+    all_cryptocurrencies = graphene.List(CryptoCurrencyType)
+
+    def resolve_all_cryptocurrencies(self, info):
+        return CryptoCurrency.objects.all()
 
 
 class CreateCryptoCurrency(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
         symbol = graphene.String(required=True)
-        price = graphene.Decimal(required=True) 
+        defillama_id = graphene.String(required=True)
 
     cryptocurrency = graphene.Field(CryptoCurrencyType)
 
-    @classmethod
-    def mutate(cls, root, info, name, symbol, price):
-        try:
-            cryptocurrency = CryptoCurrency.objects.create(
-                name=name,
-                symbol=symbol,
-                price=price
-            )
-            return CreateCryptoCurrency(cryptocurrency=cryptocurrency)
-        except Exception as e:
-            return CreateCryptoCurrency(cryptocurrency=None)
-
-
-class Query(graphene.ObjectType):
-    all_cryptocurrencies = graphene.List(CryptoCurrencyType)
-    cryptocurrency = graphene.Field(
-        CryptoCurrencyType, symbol=graphene.String())
-
-    def resolve_all_cryptocurrencies(self, info):
-        return CryptoCurrency.objects.all()
-
-    def resolve_cryptocurrency(self, info, symbol):
-        try:
-            return CryptoCurrency.objects.get(symbol=symbol)
-        except CryptoCurrency.DoesNotExist:
-            return None
+    def mutate(self, info, name, symbol, defillama_id):
+        crypto = CryptoCurrency.objects.create(
+            name=name, symbol=symbol, defillama_id=defillama_id, price=0, last_updated=timezone.now()
+        )
+        return CreateCryptoCurrency(cryptocurrency=crypto)
 
 
 class Mutation(graphene.ObjectType):
