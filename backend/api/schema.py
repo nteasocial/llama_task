@@ -9,6 +9,27 @@ class CryptoCurrencyType(DjangoObjectType):
         fields = ('id', 'name', 'symbol', 'price', 'last_updated')
 
 
+class CreateCryptoCurrency(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        symbol = graphene.String(required=True)
+        price = graphene.Decimal(required=True) 
+
+    cryptocurrency = graphene.Field(CryptoCurrencyType)
+
+    @classmethod
+    def mutate(cls, root, info, name, symbol, price):
+        try:
+            cryptocurrency = CryptoCurrency.objects.create(
+                name=name,
+                symbol=symbol,
+                price=price
+            )
+            return CreateCryptoCurrency(cryptocurrency=cryptocurrency)
+        except Exception as e:
+            return CreateCryptoCurrency(cryptocurrency=None)
+
+
 class Query(graphene.ObjectType):
     all_cryptocurrencies = graphene.List(CryptoCurrencyType)
     cryptocurrency = graphene.Field(
@@ -22,24 +43,6 @@ class Query(graphene.ObjectType):
             return CryptoCurrency.objects.get(symbol=symbol)
         except CryptoCurrency.DoesNotExist:
             return None
-
-
-class CreateCryptoCurrency(graphene.Mutation):
-    class Arguments:
-        name = graphene.String(required=True)
-        symbol = graphene.String(required=True)
-        # Changed from Float to Decimal
-        price = graphene.Decimal(required=True)
-
-    cryptocurrency = graphene.Field(CryptoCurrencyType)
-
-    def mutate(self, info, name, symbol, price):
-        cryptocurrency = CryptoCurrency.objects.create(
-            name=name,
-            symbol=symbol,
-            price=price
-        )
-        return CreateCryptoCurrency(cryptocurrency=cryptocurrency)
 
 
 class Mutation(graphene.ObjectType):

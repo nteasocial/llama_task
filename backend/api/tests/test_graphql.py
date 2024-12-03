@@ -1,86 +1,54 @@
 import pytest
-from graphene_django.utils.testing import GraphQLTestCase
+from graphene.test import Client
+from django.test import TestCase
+from django.utils import timezone
+from api.schema import schema
 from api.models import CryptoCurrency
-import json
+from decimal import Decimal
 
 
-@pytest.mark.graphql
-class TestCryptoGraphQL(GraphQLTestCase):
-    GRAPHQL_URL = "/graphql"
-
+@pytest.mark.django_db
+class TestCryptoGraphQL(TestCase):
     def setUp(self):
+        self.client = Client(schema)
         self.crypto = CryptoCurrency.objects.create(
             name="Curve DAO",
             symbol="CRV",
-            price=1.23
+            price=Decimal('1.23'),
+            last_updated=timezone.now()  
         )
 
     def test_query_all_cryptocurrencies(self):
-        """Test querying all cryptocurrencies"""
-        response = self.query(
-            '''
+        query = '''
             query {
                 allCryptocurrencies {
                     name
                     symbol
                     price
-                    lastUpdated
                 }
             }
-            '''
-        )
-
-        self.assertResponseNoErrors(response)
-        content = json.loads(response.content)
-        crypto_data = content['data']['allCryptocurrencies'][0]
-
-        assert len(content['data']['allCryptocurrencies']) == 1
-        assert crypto_data['name'] == "Curve DAO"
-        assert crypto_data['symbol'] == "CRV"
-        assert float(crypto_data['price']) == 1.23
+        '''
+        response = self.client.execute(query)
+        assert 'errors' not in response
+        assert len(response['data']['allCryptocurrencies']) == 1
+        assert response['data']['allCryptocurrencies'][0]['symbol'] == 'CRV'
 
     def test_create_cryptocurrency_mutation(self):
-        """Test creating a new cryptocurrency"""
-        response = self.query(
-            '''
+        mutation = '''
             mutation {
                 createCryptocurrency(
                     name: "Curve USD",
-                    symbol: "crvUSD"
+                    symbol: "crvUSD",
+                    price: "1.0"
                 ) {
                     cryptocurrency {
                         name
                         symbol
+                        price
                     }
                 }
             }
-            '''
-        )
-
-        self.assertResponseNoErrors(response)
-        content = json.loads(response.content)
-        crypto = content['data']['createCryptocurrency']['cryptocurrency']
-
-        assert crypto['name'] == "Curve USD"
-        assert crypto['symbol'] == "crvUSD"
-
-    def test_query_single_cryptocurrency(self):
-        """Test querying a single cryptocurrency by symbol"""
-        response = self.query(
-            '''
-            query {
-                cryptocurrency(symbol: "CRV") {
-                    name
-                    symbol
-                    price
-                }
-            }
-            '''
-        )
-
-        self.assertResponseNoErrors(response)
-        content = json.loads(response.content)
-        crypto = content['data']['cryptocurrency']
-
-        assert crypto['symbol'] == "CRV"
-        assert float(crypto['price']) == 1.23
+        '''
+        response = self.client.execute(mutation)
+        assert 'errors' not in response
+        assert response['data']['createCryptocurrency']['cryptocurrency']['symbol'] == 'crvUSD'

@@ -2,8 +2,12 @@ import requests
 from celery import shared_task
 from datetime import datetime
 from .models import CryptoCurrency
+import logging
+logger = logging.getLogger(__name__)
+
 
 DEFILLAMA_API_URL = "https://api.llama.fi/simple/price"
+
 
 @shared_task(bind=True, max_retries=3)
 def update_crypto_prices(self):

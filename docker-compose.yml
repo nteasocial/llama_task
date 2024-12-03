@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   backend:
     build: ./backend
@@ -13,15 +12,7 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    depends_on:
-      - backend
+      - ENV=docker
 
   redis:
     image: redis:7-alpine
