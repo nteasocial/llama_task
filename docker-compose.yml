@@ -11,8 +11,9 @@ services:
       - redis
       - db
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
       - ENV=docker
+    env_file:
+      - .env
 
   redis:
     image: redis:7-alpine
@@ -24,9 +25,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
 
@@ -38,6 +39,10 @@ services:
     depends_on:
       - redis
       - db
+    environment:
+      - ENV=docker
+    env_file:
+      - .env
 
   celery-beat:
     build: ./backend
@@ -47,6 +52,10 @@ services:
     depends_on:
       - redis
       - db
+    environment:
+      - ENV=docker
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

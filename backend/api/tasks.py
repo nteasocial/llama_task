@@ -3,38 +3,39 @@ from celery import shared_task
 from datetime import datetime
 from .models import CryptoCurrency
 import logging
+
 logger = logging.getLogger(__name__)
+DEFILLAMA_API_URL = "https://coins.llama.fi/prices/current"
 
 
-DEFILLAMA_API_URL = "https://api.llama.fi/simple/price"
-
-
-@shared_task(bind=True, max_retries=3)
+@shared_task(bind=True, max_retries=3, rate_limit='60/h')
 def update_crypto_prices(self):
     try:
-        # Get coins to track from database
         coins = CryptoCurrency.objects.all().values_list('symbol', flat=True)
-
         if not coins:
             return "No cryptocurrencies configured"
 
-        # Format coins for DeFiLlama API
-        coins_param = ','.join(coins)
+        coins_param = ','.join(
+            [f'coingecko:{symbol.lower()}' for symbol in coins])
 
-        # Make API request
-        response = requests.get(f"{DEFILLAMA_API_URL}/{coins_param}")
+        response = requests.get(f"{DEFILLAMA_API_URL}?coins={coins_param}")
         response.raise_for_status()
 
-        price_data = response.json()
+        data = response.json().get('coins', {})
+        updated_count = 0
 
-        # Update prices in database
-        for symbol, data in price_data.items():
-            CryptoCurrency.objects.filter(symbol=symbol).update(
-                price=data['price'],
-                last_updated=datetime.now()
-            )
+        for full_symbol, price_data in data.items():
+            symbol = full_symbol.split(':')[1].upper()
+            price = price_data.get('price')
+            if price:
+                CryptoCurrency.objects.filter(symbol=symbol).update(
+                    price=price,
+                    last_updated=datetime.now()
+                )
+                updated_count += 1
 
-        return f"Updated prices for {len(price_data)} cryptocurrencies"
+        return f"Updated {updated_count} cryptocurrency prices"
 
     except requests.exceptions.RequestException as e:
+        logger.error(f"API Error: {str(e)}")
         self.retry(exc=e, countdown=60)  # Retry after 1 minute
