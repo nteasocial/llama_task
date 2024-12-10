@@ -112,10 +112,18 @@ Project Structure
 
 Images
 
-![alt text](<Screenshot 2024-12-04 at 2.49.09 AM.png>) ![alt text](<Screenshot 2024-12-04 at 2.48.39 AM.png>)
+![alt text](Screenshot 2024-12-04 at 2.49.09 AM.png) ![alt text](Screenshot 2024-12-04 at 2.48.39 AM.png)
 
-![alt text](<Screenshot 2024-12-03 at 12.50.23 AM.png>)
+![alt text](Screenshot 2024-12-03 at 12.50.23 AM.png)
 
-![alt text](<Screenshot 2024-12-03 at 10.56.53 AM.png>) ![alt text](<Screenshot 2024-12-03 at 10.57.27 AM.png>)
+![alt text](Screenshot 2024-12-03 at 10.56.53 AM.png) ![alt text](Screenshot 2024-12-03 at 10.57.27 AM.png)
 
-![alt text](<Screenshot 2024-12-03 at 10.54.49 AM.png>)
+![alt text](Screenshot 2024-12-03 at 10.54.49 AM.png)
+
+```sh
+New UI
+```
+
+![alt text](Screenshot 2024-12-11 at 2.42.26 AM.png)
+
+![alt text](Screenshot 2024-12-11 at 2.42.34 AM.png)
