@@ -109,21 +109,17 @@ Project Structure
 ├── main_start.sh
 └── README.md
 ```
+### images
 
-Images
+![alt text](./Screenshot%202024-12-04%20at%202.49.09%20AM.png) ![alt text](./Screenshot%202024-12-04%20at%202.48.39%20AM.png)
 
-![alt text](Screenshot 2024-12-04 at 2.49.09 AM.png) ![alt text](Screenshot 2024-12-04 at 2.48.39 AM.png)
+![alt text](./Screenshot%202024-12-03%20at%2012.50.23%20AM.png)
 
-![alt text](Screenshot 2024-12-03 at 12.50.23 AM.png)
+![alt text](./Screenshot%202024-12-03%20at%2010.56.53%20AM.png) ![alt text](./Screenshot%202024-12-03%20at%2010.57.27%20AM.png)
 
-![alt text](Screenshot 2024-12-03 at 10.56.53 AM.png) ![alt text](Screenshot 2024-12-03 at 10.57.27 AM.png)
+![alt text](./Screenshot%202024-12-03%20at%2010.54.49%20AM.png)
 
-![alt text](Screenshot 2024-12-03 at 10.54.49 AM.png)
+![alt text](./Screenshot%202024-12-11%20at%202.42.34%20AM.png)  
 
-```sh
-New UI
-```
+![alt text](./Screenshot%202024-12-11%20at%202.42.26%20AM.png)
 
-![alt text](Screenshot 2024-12-11 at 2.42.26 AM.png)
-
-![alt text](Screenshot 2024-12-11 at 2.42.34 AM.png)
