@@ -1,7 +1,6 @@
 "use client";
-
-import { ApolloProvider } from "@apollo/client";
-import { client } from "../apollo-client";
+import { ApolloWrapper } from "../apollo-client";
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -9,9 +8,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <html lang="en">
       <body>
-        <ApolloProvider client={client}>{children}</ApolloProvider>
+        <ApolloWrapper>{children}</ApolloWrapper>
       </body>
     </html>
   );

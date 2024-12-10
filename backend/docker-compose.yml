@@ -35,23 +35,30 @@ services:
     build:
       context: .
       dockerfile: docker/celery.Dockerfile
-    command: celery -A app worker -l INFO
+    command: celery -A celery_app.celery worker -l INFO
     volumes:
       - .:/app
     depends_on:
       - backend
       - redis
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/crypto_db
+      - REDIS_URL=redis://redis:6379/0
 
   celery-beat:
     build:
       context: .
       dockerfile: docker/celery.Dockerfile
-    command: celery -A app beat -l INFO
+    command: celery -A celery_app.celery beat -l INFO
     volumes:
       - .:/app
     depends_on:
       - backend
       - redis
+      - celery
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/crypto_db
+      - REDIS_URL=redis://redis:6379/0
 
 volumes:
   postgres_data:
